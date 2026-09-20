@@ -1,1 +1,272 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<title>Cuenta regresiva</title>
+
+<style>
+
+    body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #808080;
+        font-family: Arial, sans-serif;
+    }
+
+    .contador {
+        text-align: center;
+        color: white;
+        border: 5px solid red;
+        padding: 40px 60px;
+        border-radius: 20px;
+        background-color: #696969;
+    }
+
+    /* Imagen */
+    .foto {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 15px;
+        margin-bottom: 20px;
+        border: 3px solid white;
+    }
+
+    #dias {
+        font-size: 70px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .reloj {
+        display: flex;
+        justify-content: center;
+        gap: 25px;
+        font-size: 35px;
+        font-weight: bold;
+    }
+
+    .tiempo {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .etiqueta {
+        font-size: 15px;
+        font-weight: normal;
+        margin-top: 5px;
+    }
+
+
+.marquesina {
+    background: #696969;
+    padding: 10px;
+    border: 2px solid red;
+    border-radius: 8px;
+    margin-top: 10px;
+    color: white;
+}
+
+</style>
+
+
+</head>
+
+<body>
+
+<div class="contador">
+
+    <!-- Imagen personalizada -->
+    <img src="mundial.jpg" class="foto" alt="Foto mundial">
+
+    <div id="dias">Cargando...</div>
+
+    <div class="reloj">
+
+        <div class="tiempo">
+            <span id="horas">00</span>
+            <span class="etiqueta">HORAS</span>
+        </div>
+
+        <div>:</div>
+
+        <div class="tiempo">
+            <span id="minutos">00</span>
+            <span class="etiqueta">MINUTOS</span>
+        </div>
+
+        <div>:</div>
+
+        <div class="tiempo">
+            <span id="segundos">00</span>
+            <span class="etiqueta">SEGUNDOS</span>
+        </div>
+
+    </div>
+<div class="marquesina">
+    <a href="https://worldshotocup.mx/" target="_blank" style="color: white;">
+        https://worldshotocup.mx/
+    </a>
+</div>
+
+</div>
+
+
+<script>
+
+    // Fecha objetivo: 23 de octubre de 2026
+    // Hora: 12:00 AM de Hermosillo, Sonora (UTC-7)
+
+    const fechaFinal = new Date(
+        "2026-10-23T00:00:00-07:00"
+    ).getTime();
+
+
+    function actualizarContador() {
+
+        const ahora = new Date();
+
+
+        // Obtener fecha actual de Hermosillo
+
+        const partes = new Intl.DateTimeFormat("en-US", {
+            timeZone: "America/Hermosillo",
+            year: "numeric",
+            month: "numeric",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            hourCycle: "h23"
+        }).formatToParts(ahora);
+
+
+        let datos = {};
+
+        partes.forEach(parte => {
+            datos[parte.type] = parte.value;
+        });
+
+
+        // Fecha y hora actual de Hermosillo
+
+        const ahoraHermosillo = new Date(
+
+            `${datos.year}-${String(datos.month).padStart(2, "0")}-${String(datos.day).padStart(2, "0")}T${String(datos.hour).padStart(2, "0")}:${String(datos.minute).padStart(2, "0")}:${String(datos.second).padStart(2, "0")}-07:00`
+
+        ).getTime();
+
+
+        // Diferencia de tiempo
+
+        const diferencia = fechaFinal - ahoraHermosillo;
+
+
+        // Calcular días de calendario
+
+        const hoyCalendario = new Date(
+            datos.year,
+            datos.month - 1,
+            datos.day
+        );
+
+        const fechaObjetivoCalendario = new Date(
+            2026, 9, 23
+        );
+
+        const diasCalendario = Math.round(
+            (fechaObjetivoCalendario - hoyCalendario) /
+            (1000 * 60 * 60 * 24)
+        );
+
+
+        // Si llegó el día
+
+        if (diferencia <= 0) {
+
+            document.getElementById("dias").textContent =
+                "¡Llegó el día!";
+
+            document.getElementById("horas").textContent = "00";
+            document.getElementById("minutos").textContent = "00";
+            document.getElementById("segundos").textContent = "00";
+
+            return;
+        }
+
+
+        // Calcular horas
+
+        const horas = Math.floor(
+            (diferencia % (1000 * 60 * 60 * 24)) /
+            (1000 * 60 * 60)
+        );
+
+
+        // Calcular minutos
+
+        const minutos = Math.floor(
+            (diferencia % (1000 * 60 * 60)) /
+            (1000 * 60)
+        );
+
+
+        // Calcular segundos
+
+        const segundos = Math.floor(
+            (diferencia % (1000 * 60)) /
+            1000
+        );
+
+
+        // Mostrar días
+
+        document.getElementById("dias").textContent =
+            diasCalendario + " días";
+
+
+        // Mostrar horas
+
+        document.getElementById("horas").textContent =
+            String(horas).padStart(2, "0");
+
+
+        // Mostrar minutos
+
+        document.getElementById("minutos").textContent =
+            String(minutos).padStart(2, "0");
+
+
+        // Mostrar segundos
+
+        document.getElementById("segundos").textContent =
+            String(segundos).padStart(2, "0");
+
+    }
+
+
+    // Actualizar inmediatamente
+
+    actualizarContador();
+
+
+    // Actualizar cada segundo
+
+    setInterval(actualizarContador, 1000);
+
+</script>
+
+
+</body>
+
+</html>
+
 
